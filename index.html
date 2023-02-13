@@ -1,0 +1,67 @@
+
+<div class="col-sm-8 col-sm-offset-2" style="margin-top: 30px;">
+
+  <img src="../../../assets/AdoEntityLogo.png" style="background-color: #eee; border-radius: 150px;padding:10px;box-shadow: 5px 5px 12px #888;"/>
+<h1 id="ado.entity">Ado.Entity</h1>
+<p><a href="https://www.nuget.org/packages/Ado.Entity"><img src="https://img.shields.io/nuget/v/Ado.Entity.svg?style=plastic&amp;logo=nuget" alt="Ado.Entity Nuget" /></a>  &nbsp;
+  <a href="https://github.com/Open-range-org/Ado.Entity"><img src="https://img.shields.io/badge/Github-Ado.Entity-green?logo=github" alt="Github" /></a> &nbsp;
+  <a href="https://github.com/Open-range-org/Ado.Entity/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT License" /></a> &nbsp;
+  <a href="https://github.com/Open-range-org/Ado.Entity/"><img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build Pass" /></a></p>
+<p>Ado.Entity is an object-relational mapping framework for .NET applications. Object-relational mapping allows the use of database queries and operations with object-oriented programming languages. It has similarty with Entity framework But you must agree that , it is a lot simpler than Entity framework . If you don;t know about The entity , you can have a look here . Even if you are familier with Entity and trying to avoid complex <code>Code First, Model First, and Database First</code> approaches , you can try this .</p>
+<p>You need to import Ado.Entity Namespace’</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cs"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>  <span class="kw">using</span> Ado.<span class="fu">Entity</span>;</span></code></pre></div>
+<p>After Improting the namespace we need to create one POCO class which will hve same name as a table . That POCO need to inharite the class <strong><code>AdoBase</code></strong> . That class should contain properties Where Property names and Column names of the Table should be same . For Example, if we have a table called <strong>Users</strong> and it’s having 5 columns <code>"Id(int)","Name(varchar(20))","Age(int)","IsAdmin(bit)","DOB(datetime)"</code> then the mapping poco class is</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cs"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>    <span class="kw">class</span> Users:AdoBase</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>    &#123;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>        [Primary]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>        <span class="kw">public</span> <span class="dt">int</span> Id &#123; <span class="kw">get</span>; <span class="kw">set</span>; &#125;</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a>        <span class="kw">public</span> <span class="dt">string</span> Name &#123; <span class="kw">get</span>; <span class="kw">set</span>; &#125;</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>        <span class="kw">public</span> <span class="dt">bool</span> IsAdmin &#123; <span class="kw">get</span>; <span class="kw">set</span>; &#125;</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a>        <span class="kw">public</span> <span class="dt">int</span> Age &#123; <span class="kw">get</span>; <span class="kw">set</span>; &#125;</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>        <span class="kw">public</span> DateTime DOB &#123; <span class="kw">get</span>; <span class="kw">set</span>; &#125;</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>    &#125;</span></code></pre></div>
+<p>Note : We can use attribute like , Primary , Unique for a property . One class can have only one property tith attribute primary . More then one primary attribute will throw error(runtime).</p>
+<h2 id="get-data-from-table">Get data from table</h2>
+<p>We need to follow very simple steps to get data from database . First we need to create a instance of <code>Connection</code> class where we need to pass connection string . <code>GetDataByQuery</code> helps to get data from table . <code>GetDataByQuery</code> expects sql query , which we need to pass when calling this method .</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cs"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>        <span class="kw">public</span> <span class="fu">DbConnection</span>()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>        &#123;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>            IConnection connection = <span class="kw">new</span> <span class="fu">Connection</span>(connectionString);</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>            <span class="dt">var</span> data=connection.<span class="fu">GetDataByQuery</span>&lt;Users&gt;(<span class="st">&quot;select * from Users&quot;</span>);</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>        &#125;</span></code></pre></div>
+<h2 id="update-rows-of-a-table">Update row(s) of a table</h2>
+<p>To update a row of the table Users first we need to create a instance of <code>Connection</code> class where we need to pass connection string . <code>UpdateEntry</code> helps to update data of a row . we need to pass an object of class “Users” in <code>UpdateEntry</code> . Updating multiple rows also possible here .</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cs"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co">//single row update</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>        <span class="kw">public</span> <span class="fu">DbConnection</span>()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>        &#123;</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>            IConnection connection = <span class="kw">new</span> <span class="fu">Connection</span>(connectionString);</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>            <span class="co">//data is a object of class Users .</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>            connection.<span class="fu">UpdateEntry</span>&lt;Users&gt;(data);</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>        &#125;</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a><span class="co">//multiple row update</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a>        <span class="kw">public</span> <span class="fu">DbConnection</span>()</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a>        &#123;</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a>            IConnection connection = <span class="kw">new</span> <span class="fu">Connection</span>(connectionString);</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>            <span class="co">//dataList is List&lt;Users&gt;  .</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a>            connection.<span class="fu">UpdateEntry</span>&lt;Users&gt;(dataList);</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a>        &#125;</span></code></pre></div>
+<h2 id="insert-rows-in-a-table">Insert row(s) in a table</h2>
+<p>To Insert a row of the table Users first we need to create a instance of <code>Connection</code> class where we need to pass connection string . <code>AddEntry</code> helps to insert a row . we need to pass an object of class “Users” in <code>AddEntry</code> . Adding multiple rows also possible here .</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cs"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="co">//single row Add</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>        <span class="kw">public</span> <span class="fu">DbConnection</span>()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a>        &#123;</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a>            IConnection connection = <span class="kw">new</span> <span class="fu">Connection</span>(connectionString);</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a>            <span class="co">//data is a object of class Users .</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a>            connection.<span class="fu">AddEntry</span>&lt;Users&gt;(data);</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a>        &#125;</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a><span class="co">//multiple row Add</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a>        <span class="kw">public</span> <span class="fu">DbConnection</span>()</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a>        &#123;</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a>            IConnection connection = <span class="kw">new</span> <span class="fu">Connection</span>(connectionString);</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a>            <span class="co">//dataList is List&lt;Users&gt;  .</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a>            connection.<span class="fu">AddEntry</span>&lt;Users&gt;(dataList);</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a>        &#125;</span></code></pre></div>
+<p>So , The concept is not new right ? Yes I know. But still if you want a light weight object-relational mapping library try this .</p>
+<h2 id="example-project-code-example">Example project : <a href="https://github.com/NIHAR-SARKAR/Ado.Entity.Example"><img src="https://img.shields.io/badge/Github-Code%20Example-green?logo=github" alt="Code Example" /></a></h2>
+<br/><br/><br/><br/><br/><br/>
+
+</div>
